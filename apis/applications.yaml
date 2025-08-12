@@ -1,0 +1,928 @@
+openapi: 3.0.3
+info:
+  title: Applications
+  version: 1.0.0
+  description: API documentations for managing Application Endpoints
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /applications:
+    get:
+      summary: Get applications
+      description:
+        Returns the first 100 applications. Supports optional filtering by
+        application type.
+      operationId: getApplications
+      tags:
+        - /applications
+      parameters:
+        - in: query
+          name: applicationType
+          required: true
+          schema:
+            type: string
+            nullable: false
+            enum:
+              - Oloid Verify
+              - Generic
+              - Passwordless
+            example: Oloid Verify
+      responses:
+        "200":
+          description: Applications retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Applications retrieved successfully
+                  data:
+                    $ref: "#/components/schemas/GetApplication"
+              examples:
+                default:
+                  $ref: "#/components/examples/GetApplicationsExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    post:
+      summary: Create an application
+      description: Creates a new application using the provided request body.
+      operationId: createApplication
+      tags:
+        - /applications
+      requestBody:
+        required: true
+        description: Must match the CreateApplicationRequest schema.
+        content:
+          application/json:
+            schema:
+              required:
+                - ApplicationType
+                - ApplicationName
+              $ref: "#/components/schemas/ApplicationRequest"
+            examples:
+              default:
+                $ref: "#/components/examples/CreateApplicationRequestExample"
+      responses:
+        "200":
+          description: Application created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: false
+                    example: Application created successfully
+                  data:
+                    $ref: "#/components/schemas/ApplicationWrapper"
+                additionalProperties: false
+              examples:
+                default:
+                  $ref: "#/components/examples/CreateApplicationResponseExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /applications/{applicationID}:
+    get:
+      summary: Get an application
+      description: Returns detailed information about a specific application.
+      operationId: getApplicationByApplicationID
+      tags:
+        - /applications/{applicationID}
+      parameters:
+        - in: path
+          name: applicationID
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+            maxLength: 32
+            minLength: 32
+            nullable: false
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+      responses:
+        "200":
+          description: Application details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Applications retrieved successfully
+                  data:
+                    $ref: "#/components/schemas/Application"
+              examples:
+                default:
+                  $ref: "#/components/examples/GetApplicationByIdResponseExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    put:
+      summary: Update an application
+      description: Updates selected fields of an existing application.
+      operationId: updateApplication
+      tags:
+        - /applications/{applicationID}
+      parameters:
+        - name: applicationID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+            maxLength: 32
+            minLength: 32
+            nullable: false
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+        - name: rawJson
+          in: query
+          required: false
+          schema:
+            type: integer
+            nullable: true
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationRequest"
+            examples:
+              default:
+                value:
+                  ApplicationName: Updated Secure Login
+                  Description: Updated secure passwordless authentication application
+      responses:
+        "200":
+          description: Application updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Application updated successfully
+                  data:
+                    $ref: "#/components/schemas/UpdateApplication"
+              examples:
+                default:
+                  $ref: "#/components/examples/UpdateApplicationResponseExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    delete:
+      summary: Delete an application
+      description: Deletes an existing application by ID.
+      operationId: deleteApplication
+      tags:
+        - /applications/{applicationID}
+      parameters:
+        - in: path
+          name: applicationID
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+            maxLength: 32
+            minLength: 32
+            nullable: false
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+      responses:
+        "200":
+          description: Application deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /applications/{applicationID}/users:
+    post:
+      summary: Get users to an application
+      description: Get one or more users for an application.
+      operationId: getApplicationUsers
+      tags:
+        - /applications/{applicationID}
+      parameters:
+        - name: applicationID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+            maxLength: 32
+            minLength: 32
+            nullable: false
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+      responses:
+        "200":
+          description: User(s) added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/GetUserResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /applications/{applicationID}/logo:
+    put:
+      summary: Update application logo
+      description:
+        Updates the logo for a specific application using a base64-encoded
+        image string.
+      operationId: updateLogoByApplicationID
+      tags:
+        - /applications/{applicationID}
+      parameters:
+        - name: applicationID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-fA-F0-9]{32}$
+            maxLength: 32
+            minLength: 32
+            nullable: false
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLogoRequest"
+      responses:
+        "200":
+          description: Logo updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Application does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+components:
+  securitySchemes:
+    AuthToken:
+      type: http
+      scheme: bearer
+  schemas:
+    Application:
+      $ref: ./schemas/Application.json
+    User:
+      $ref: ./schemas/User.json
+    GetUserResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        lastEvaluatedKey:
+          type: string
+          nullable: true
+    ApplicationWrapper:
+      type: object
+      additionalProperties: false
+      properties:
+        application:
+          $ref: "#/components/schemas/Application"
+    GetApplication:
+      type: object
+      additionalProperties: false
+      properties:
+        Applications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+    UpdateApplication:
+      type: object
+      additionalProperties: false
+      properties:
+        application:
+          $ref: "#/components/schemas/Application"
+    ApplicationRequest:
+      type: object
+      properties:
+        ApplicationName:
+          type: string
+          nullable: true
+        Description:
+          type: string
+          nullable: true
+        ApplicationType:
+          type: string
+          nullable: false
+          enum:
+            - Oloid Verify
+            - Generic
+            - Passwordless
+          example: Oloid Verify
+        OloID:
+          type: string
+          description: The unique OloID of the user.
+          pattern: ^[0-9a-fA-F]{32}$
+          example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+          minLength: 32
+          maxLength: 32
+          nullable: false
+      additionalProperties: true
+    UpdateLogoRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - LogoBase64String
+        - ApplicationID
+      description: Must include LogoBase64String and ApplicationID.
+      properties:
+        LogoBase64String:
+          type: string
+          nullable: false
+        ApplicationID:
+          type: string
+          pattern: ^[a-fA-F0-9]{32}$
+          maxLength: 32
+          minLength: 32
+          nullable: false
+          example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    GetApplicationsExample:
+      value:
+        message: Applications retrieved successfully.
+        data:
+          Applications:
+            - ActionFailureLabel: Authentication Failed
+              ActionProcessingLabel: Processing...
+              ActionSucessLabel: Success!
+              AgentAutoUpdate: false
+              AllowCredentialEnrollmentUpdates: true
+              AppSubType: DeviceLock
+              ApplicationID: b3f1a7e2c8d011ef8e7b3f9d2b1a4c6e
+              ApplicationLogo: null
+              ApplicationName: Secure Login
+              ApplicationType: Passwordless
+              Authentication: Authentication
+              AuthFailureMessage: Invalid credentials.
+              AuthTimeout: 60
+              AuthenticationFailureErrorMessage: Authentication failed. Please try again.
+              AutoDismissIntentPrompt: true
+              AutoDismissIntentPromptTime: 3
+              AutoLaunchWebPagePostAuth: true
+              AutoScan: true
+              BadgeType:
+                - HID
+                - Seos
+              CaptureWindowsLoginEvents: true
+              CertifyType: AirTouch
+              CloudBBoxSize: 60
+              ContinuousBadgeScan: true
+              CreatedAt: 2024-12-15T09:30:00Z
+              Debug: true
+              DebugPDLogs: true
+              DefaultApplication: true
+              DeleteUser: true
+              Description: Passwordless authentication application
+              DisableAuth: Face
+              DisableFR: true
+              DisableLiveliness: true
+              DisplayInstructionScreen: true
+              DisplayName: SecureAuth
+              DisplayThermalReading: true
+              EnableAutoLogin: true
+              EnableBadgeInput: true
+              EnableCopyCredentials: true
+              EnableMovingAverage: true
+              EnableNewTabCamera: true
+              EnableSoftwareLiveness: true
+              EnableThermal: true
+              EnableThermalErrorCorrection: true
+              EndPoints:
+                - endpoint1
+                - endpoint2
+              EndpointTemplateID: secure
+              ErrorPromptAutoDismissAfter: 10
+              ExceptionTrigger: true
+              Exceptions:
+                - exception1
+                - exception2
+              FaceLoginAdditionalFaceMatch: true
+              FaceLoginFaceMatchThreshold: 0.95
+              FaceLoginLiveliness: true
+              FaceLoginLivelinessProbability: 0.9
+              FaceLoginLivelinessQuality: 0.85
+              FaceLoginUseBothModel: true
+              FrameProcessDelayTime: 100
+              FRMode: OnDevice
+              IdleScreenHardTimeLimit: 60
+              IdleScreenSoftTimeLimit: 30
+              IdpID: idp_123
+              IgnoreConnection: true
+              IntentScreenKey: OloidIntentTwoButton
+              LandmarksTargetConfidence: 0.98
+              LivelinessTargetConfidence: 90
+              MFAId: mfa_456
+              MovingMaxAverage: true
+              MovingMinAverage: true
+              OfflineMode: true
+              Okta:
+                - okta_group_a
+                - okta_group_b
+              OloidCertify: true
+              OloidComInt: true
+              OnDeviceBBoxSize: 0.7
+              OnDeviceModel: ModelX
+              PingTimeOut: 10
+              PlatformTriggers: true
+              ReAuthenticateEveryTime: true
+              RequireConsent: true
+              RunLocalHttpServer: true
+              SelfAttestationExpiry: 120
+              SessionExpiry: 60
+              ShowActionStatus: true
+              ShowActualActionError: true
+              ShowClockOnScreen: true
+              ShowDefaultIntegrationMessage: true
+              ShowIndividualActionStatus: true
+              ShowIntentScreen: true
+              StrictErrorHandling: true
+              TenantID: B1C3D5E7F9A24B8C
+              TenantName: production
+              Timezone: Asia/Kolkata
+              TransactionType: PasswordlessLogin
+              UpdatedAt: 2025-04-25T18:25:00.000Z
+              UseGroupsforAuth: true
+              ValidateWindowsCredential: true
+              Version: 2
+              WindowsAdminPasscode: WindowsAdminPasscode
+              WindowsLoginBadgeType: null
+              WindowsLoginTimeout: null
+              WriteRPAConfig: true
+    CreateApplicationRequestExample:
+      value:
+        ApplicationType: Passwordless
+        ApplicationName: Secure Login App
+    CreateApplicationResponseExample:
+      value:
+        message: Application created successfully
+        data:
+          application:
+            ApplicationID: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            ApplicationName: Secure Login App
+            ApplicationType: Passwordless
+            AppSubType: DeviceLock
+            Description: Application for testing
+            Version: 1
+            CreatedAt: 2025-04-27T10:30:00Z
+            UpdatedAt: 2025-04-27T10:30:00Z
+            TenantID: FA0280A8A0E64DF9
+            TenantName: preview
+    GetApplicationByIdResponseExample:
+      value:
+        message: Application retrieved successfully
+        data:
+          ApplicationID: 70a4f870d7ef11ef97ef7fd6a9ac4856
+          ApplicationName: Secure Login App
+          ApplicationType: Passwordless
+          AppSubType: DeviceLock
+          Description: Application for testing
+          Version: 1
+          CreatedAt: 2025-04-27T10:30:00Z
+          UpdatedAt: 2025-04-27T10:30:00Z
+          TenantID: FA0280A8A0E64DF9
+          TenantName: preview
+          ActionFailureLabel: FAILED 30 Min Break Not Complete
+          ActionProcessingLabel: Processing...
+          ActionSucessLabel: Success
+          AgentAutoUpdate: false
+          Authentication: Standard
+          AuthFailureMessage: Please contact your supervisor or admin for further assistance.
+          AuthTimeout: 60
+          AuthenticationFailureErrorMessage: Authentication failed
+          AutoDismissIntentPrompt: false
+          AutoDismissIntentPromptTime: 3
+          AutoLaunchWebPagePostAuth: false
+          AutoScan: true
+          CaptureWindowsLoginEvents: false
+          CertifyType: AirTouch
+          CloudBBoxSize: 60
+          ContinuousBadgeScan: false
+          Debug: false
+          DebugPDLogs: false
+          DefaultApplication: false
+          DeleteUser: false
+          DisableAuth: Face
+          DisableFR: false
+          DisableLiveliness: false
+          DisplayInstructionScreen: true
+          DisplayName: Secure Login
+          DisplayThermalReading: false
+          EnableAutoLogin: false
+          EnableBadgeInput: true
+          EnableCopyCredentials: true
+          EnableMovingAverage: false
+          EnableNewTabCamera: false
+          EnableSoftwareLiveness: true
+          EnableThermal: false
+          EnableThermalErrorCorrection: false
+          EndPoints: []
+          EndpointTemplateID: secure
+          ErrorPromptAutoDismissAfter: 10
+          ExceptionTrigger: false
+          FaceLoginAdditionalFaceMatch: false
+          FaceLoginLiveliness: false
+          FaceLoginUseBothModel: false
+          FrameProcessDelayTime: 100
+          FRMode: OnDevice
+          IdleScreenHardTimeLimit: 60
+          IdleScreenSoftTimeLimit: 30
+          IgnoreConnection: false
+          IntentScreenKey: OloidIntentFourButton
+          LandmarksTargetConfidence: 0.98
+          LivelinessTargetConfidence: 90
+          MovingMaxAverage: false
+          MovingMinAverage: false
+          OfflineMode: false
+          OloidCertify: false
+          OloidComInt: false
+          OnDeviceBBoxSize: 0.7
+          OnDeviceModel: ModelV
+          PingTimeOut: 30
+          PlatformTriggers: false
+          ReAuthenticateEveryTime: false
+          RequireConsent: true
+          RunLocalHttpServer: true
+          SelfAttestationExpiry: 120
+          SessionExpiry: 60
+          ShowActionStatus: true
+          ShowActualActionError: true
+          ShowClockOnScreen: true
+          ShowDefaultIntegrationMessage: true
+          ShowIndividualActionStatus: true
+          ShowIntentScreen: true
+          StrictErrorHandling: true
+          Timezone: America/Los_Angeles
+          TransactionType: FaceAuth
+          UseGroupsforAuth: false
+          ValidateWindowsCredential: false
+          WindowsAdminPasscode: admin123
+          WriteRPAConfig: false
+    UpdateApplicationResponseExample:
+      value:
+        message: Application updated successfully
+        data:
+          application:
+            ApplicationID: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            ApplicationName: Updated Secure Login
+            ApplicationType: Passwordless
+            AppSubType: DeviceLock
+            Description: Updated application for testing
+            Version: 2
+            UpdatedAt: 2025-04-27T11:30:00Z
+            TenantID: FA0280A8A0E64DF9
+            TenantName: preview
+            PingTimeOut: 60
+            RequireConsent: true
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message:
+          "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
+security:
+  - AuthToken: []
+tags:
+  - name: /applications
+    description: Operations on the applications collection (list and create)
+  - name: /applications/{applicationID}
+    description: Operations on a specific application

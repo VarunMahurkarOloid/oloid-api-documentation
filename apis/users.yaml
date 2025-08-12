@@ -1,0 +1,1261 @@
+openapi: 3.0.3
+info:
+  title: Users
+  version: 1.0.0
+  description: Users
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /users:
+    get:
+      summary: Get users
+      description: Retrieve top 100 user informations
+      operationId: getUsers
+      tags:
+        - /users
+      parameters:
+        - name: connection
+          in: query
+          required: false
+          schema:
+            type: string
+            nullable: false
+        - name: lastEvaluatedKey
+          in: query
+          required: false
+          schema:
+            type: string
+            nullable: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: number
+            nullable: false
+        - name: PrimaryID
+          in: query
+          required: false
+          schema:
+            type: number
+            nullable: false
+      responses:
+        "200":
+          description: Successfully retrieved users
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    post:
+      summary: Create user
+      description: Create a new user
+      operationId: createUser
+      tags:
+        - /users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Add user request schema
+              required:
+                - ConnectionID
+                - FullName
+                - PrimaryID
+              type: object
+              properties:
+                ConnectionID:
+                  type: string
+                  pattern: ^[0-9a-fA-F]{32}$
+                  example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+                  minLength: 32
+                  maxLength: 32
+                  nullable: false
+                FullName:
+                  type: string
+                  nullable: true
+                PrimaryID:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: Created a user successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: "#/components/schemas/Connection"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/{oloID}:
+    get:
+      summary: Get user by oloID
+      description: Retrieve details of a specific connection by its unique ID
+      operationId: getUser
+      tags:
+        - /users
+      parameters:
+        - in: path
+          name: oloID
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      responses:
+        "200":
+          description: Successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    delete:
+      summary: Delete
+      description: Initiates deleting a USER
+      operationId: deleteUser
+      tags:
+        - /users
+      parameters:
+        - in: path
+          name: oloID
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/{oloID}/faces:
+    post:
+      summary: Upload face
+      description: Upload a face image
+      operationId: addFace
+      tags:
+        - /users/faces
+      parameters:
+        - name: bestShot
+          in: query
+          schema:
+            type: integer
+            nullable: false
+        - name: oloID
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - FaceImage
+              type: object
+              properties:
+                FaceImage:
+                  type: string
+      responses:
+        "200":
+          description: Face uploaded successfully
+          content:
+            application/json:
+              schema:
+                title: Add face response schema
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/FaceSimilar"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/{oloID}/cognito/{email}:
+    delete:
+      summary: Delete Cognito USER
+      description: Initiates Deleting a Cognito USER
+      operationId: deleteCognitoUser
+      tags:
+        - /users/cognito
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: oloID
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      responses:
+        "200":
+          description: Successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/import/users/status:
+    get:
+      summary: User import status
+      description: Retrieve the status of a user import process based on the provided fileId
+      operationId: getImportStatus
+      tags:
+        - /users/import
+      parameters:
+        - in: query
+          name: fileId
+          required: true
+          schema:
+            type: string
+            nullable: false
+      responses:
+        "200":
+          description: 200 Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: object
+                    properties:
+                      file:
+                        type: string
+                        nullable: true
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/user/details:
+    get:
+      summary: User details
+      operationId: getUserDetails
+      description: Retrieve User details based on the provided token
+      tags:
+        - /users
+      responses:
+        "200":
+          description: Connection details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/tenant/admin:
+    get:
+      summary: Get admin users
+      description: Retrieve the admin users details
+      operationId: getAdminUsers
+      tags:
+        - /users/tenant
+      parameters:
+        - in: query
+          name: role
+          required: true
+          schema:
+            type: string
+          description: Role of the user to filter the admin users
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: List users response schema
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/UserResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /oloid-users/{oloID}:
+    delete:
+      summary: Delete a specific oloid user
+      description: It deletes a specific user with the oloID
+      operationId: deleteOloidUser
+      tags:
+        - /oloid-users
+      parameters:
+        - in: path
+          name: oloID
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/faces/similar:
+    post:
+      summary: Similar Faces
+      description: Find Similar Faces
+      operationId: findSimilarFaces
+      tags:
+        - /users/faces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Find similar faces request schema
+              required:
+                - OloID
+              type: object
+              properties:
+                Connections:
+                  type: array
+                  items:
+                    type: string
+                    nullable: true
+                OloID:
+                  type: string
+                  description: The unique OloID of the user.
+                  pattern: ^[0-9a-fA-F]{32}$
+                  example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+                  minLength: 32
+                  maxLength: 32
+                  nullable: false
+                Confidence:
+                  type: number
+                  nullable: true
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/FaceSimilar"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /oloid-users/{oloID}/invite:
+    post:
+      summary: Invite User
+      description: To invite a user some oloID to join the Oloid-Users group
+      operationId: inviteUser
+      tags:
+        - /oloid-users
+      parameters:
+        - name: oloID
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/UserInvite"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /oloid-users/{oloID}/login-url:
+    post:
+      summary: Login URL
+      description: To generate a login URL for a specific User with the ID
+      operationId: sendLoginUrlMultipleUsers
+      tags:
+        - /oloid-users
+      parameters:
+        - name: oloID
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The unique OloID of the user.
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - QueryParams
+              $ref: "#/components/schemas/Face"
+      responses:
+        "200":
+          description: Face uploaded successfully
+          content:
+            application/json:
+              schema:
+                title: Add face response schema
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Face"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/invite:
+    post:
+      summary: Invite User
+      description: Helps to send an Invitation to a User
+      operationId: inviteNewUser
+      tags:
+        - /users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /users/pin/encrypt:
+    post:
+      summary: Encrypt/Decrypt PIN
+      description: Initiates Encrypting or Decrypting a User's PIN
+      operationId: encryptAllUsersPin
+      tags:
+        - /users/pin
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: User does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+tags:
+  - name: /users
+    description: Basic user operations like create, read, update, delete
+  - name: /users/import
+    description: Operations for importing users and checking import status
+  - name: /users/faces
+    description: Operations for managing and comparing user face data
+  - name: /users/pin
+    description: Operations for PIN encryption and decryption
+  - name: /users/tenant
+    description: Operations for tenant administration
+  - name: /oloid-users
+    description: Operations specific to Oloid users management
+  - name: /users/cognito
+    description: Operations related to Cognito user management
+components:
+  securitySchemes:
+    AuthToken:
+      type: http
+      scheme: bearer
+  schemas:
+    UserInvite:
+      type: object
+      properties:
+        $metadata:
+          $ref: "#/components/schemas/Face"
+        User:
+          $ref: "#/components/schemas/User"
+    Application:
+      $ref: ./schemas/Application.json
+    User:
+      $ref: ./schemas/User.json
+    Face:
+      $ref: ./common/Face.json
+    Endpoint:
+      $ref: ./schemas/Endpoint.json
+    FaceSimilar:
+      type: object
+      properties:
+        Errors:
+          type: array
+          items:
+            type: string
+            nullable: true
+          nullable: true
+        Faces:
+          type: array
+          items:
+            $ref: "#/components/schemas/Face"
+          nullable: true
+        Descriptor:
+          $ref: "#/components/schemas/Face"
+          nullable: true
+    UserResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        lastEvaluatedKey:
+          type: string
+          nullable: false
+    Connection:
+      $ref: ./schemas/Connection.json
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message: "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
+security:
+  - AuthToken: []

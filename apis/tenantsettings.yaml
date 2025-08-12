@@ -1,0 +1,455 @@
+openapi: 3.0.3
+info:
+  title: Tenant Settings
+  version: 1.0.0
+  description: API documentation for credentials request.
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /tenant-settings/credentials/cognito:
+    post:
+      summary: Request Cognito credentials
+      description: Submit a request to generate or retrieve Cognito credentials.
+      operationId: createCognitoUserCred
+      tags:
+        - /tenant-settings/credentials/cognito
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Role:
+                  type: string
+                  nullable: true
+                TokenName:
+                  type: string
+                  nullable: true
+                Scopes:
+                  type: array
+                  items:
+                    type: string
+                    nullable: true
+      responses:
+        "200":
+          description: Created Credential Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/TenantsettingCredential"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: It does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    get:
+      summary: Retrieve Cognito credentials
+      description: Retrieve Cognito credentials.
+      operationId: getCognitoCredentials
+      tags:
+        - /tenant-settings/credentials/cognito
+      responses:
+        "200":
+          description: Created Credential Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      Users:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Data"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: It does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /tenant-settings/credentials/cognito/{username}:
+    get:
+      summary: Retrieve Cognito credentials by username
+      description: Retrieve Cognito credentials by username
+      operationId: getCognitoUserCred
+      tags:
+        - /tenant-settings/credentials/cognito/{username}
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+      responses:
+        "200":
+          description: Retrieve Credential Successfully by username
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Data"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: It does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    put:
+      summary: Update Cognito credentials by username
+      description: Update Cognito credentials by username
+      operationId: updateCognitoUserCred
+      tags:
+        - /tenant-settings/credentials/cognito/{username}
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Created Credential Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: It does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    delete:
+      summary: Deleted Cognito credentials by username
+      description: Deleted Cognito credentials by username
+      operationId: deleteCognitoUserCred
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - /tenant-settings/credentials/cognito/{username}
+      responses:
+        "200":
+          description: Retrieve Credential Successfully by username
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: It does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+components:
+  securitySchemes:
+    AuthToken:
+      type: http
+      scheme: bearer
+  schemas:
+    TenantsettingCredential:
+      type: object
+      additionalProperties: false
+      properties:
+        SecretKey:
+          type: string
+          nullable: true
+        Key:
+          type: string
+          nullable: true
+        Tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        Description:
+          type: string
+          nullable: true
+        Secrets:
+          $ref: "#/components/schemas/Secret"
+    Secret:
+      type: object
+      additionalProperties: false
+      properties:
+        Data:
+          $ref: "#/components/schemas/Data"
+    Tag:
+      type: object
+      additionalProperties: false
+      properties:
+        Key:
+          type: string
+          nullable: true
+        Value:
+          type: string
+          nullable: true
+    Data:
+      type: object
+      additionalProperties: false
+      properties:
+        $metadata:
+          $ref: "#/components/schemas/Face"
+        User:
+          $ref: "#/components/schemas/User"
+        Password:
+          type: string
+          nullable: true
+    Face:
+      $ref: ./common/Face.json
+    User:
+      $ref: ./schemas/User.json
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message: "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
+security:
+  - AuthToken: []
+tags:
+  - name: /tenant-settings/credentials/cognito
+    description: Operations for managing Cognito credentials
+  - name: /tenant-settings/credentials/cognito/{username}
+    description: Operations for managing individual Cognito credentials by username

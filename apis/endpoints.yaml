@@ -1,0 +1,1374 @@
+openapi: 3.0.3
+info:
+  title: Endpoints
+  version: 1.0.0
+  description: Endpoints
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /endpoint:
+    get:
+      summary: Get all Endpoints
+      operationId: getAllEndpoints
+      description: Returns a list of top 100 Endpoints.
+      tags:
+        - /endpoint
+      parameters:
+        - in: query
+          name: endpointType
+          required: true
+          schema:
+            type: string
+            enum:
+              - OloidWorkflow
+              - Oloid Verify
+              - Oloid Connect
+              - Windows Login
+              - CloudKey
+              - DeviceLock
+              - M-Tag
+              - OloidVault
+              - WebKey
+              - EnrollFace
+            nullable: false
+            example: Windows Login
+        - in: query
+          name: projectionList
+          required: false
+          schema:
+            type: string
+            example: EndpointName, EndpointID, EndpointType
+        - in: query
+          name: locationID
+          required: false
+          schema:
+            type: string
+            nullable: true
+            example: L101
+        - in: query
+          name: buildingID
+          required: false
+          schema:
+            type: string
+            nullable: true
+            example: B101
+        - in: query
+          name: areaID
+          required: false
+          schema:
+            type: string
+            nullable: true
+            example: b70d14a0d33411eb8fb49fe5821818e3
+        - in: query
+          name: statusType1
+          required: false
+          schema:
+            type: string
+            nullable: true
+            example: inactiveonly
+        - in: query
+          name: statusType
+          required: false
+          schema:
+            type: string
+            nullable: true
+            example: all
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: Get list of Endpoints Schema
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/GetEndpointDetail"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/{endpointID}:
+    get:
+      summary: Get endpoint
+      operationId: getEndpointDetailsByID
+      description: Retrieve a specific Endpoint by Endpoint ID
+      tags:
+        - /endpoint
+      parameters:
+        - name: endpointID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9]{6}$
+            minLength: 6
+            maxLength: 6
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Endpoint"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    put:
+      summary: Update endpoint
+      description: Updates an Endpoint
+      operationId: updateEndpointDetail
+      tags:
+        - /endpoint
+      parameters:
+        - name: endpointID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9]{6}$
+            minLength: 6
+            maxLength: 6
+            nullable: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Endpoint"
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/{endpointID}/endusers:
+    get:
+      summary: Get end user
+      description: Retrieve information about end user of specific endpoint
+      operationId: getEndUserFromEndpoint
+      tags:
+        - /endpoint/{endpointID}
+      parameters:
+        - name: endpointID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9]{6}$
+            minLength: 6
+            maxLength: 6
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: array
+                    items:
+                      type: string
+                      pattern: ^[a-fA-F0-9]{32}$
+                      maxLength: 32
+                      minLength: 32
+                      nullable: false
+                      example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /uniqueid/guid:
+    get:
+      summary: Get GUID
+      description: Get unique GUID
+      operationId: getUUID
+      tags:
+        - /uniqueid/guid
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: The Get List Application Schema
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: string
+                        pattern: ^[a-fA-F0-9]{32}$
+                        maxLength: 32
+                        minLength: 32
+                        nullable: false
+                        example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/{endpointID}/repair:
+    put:
+      summary: Repair endpoint
+      description: It initiates a repair process for a specific endpoint
+      operationId: rePairEndpoint
+      tags:
+        - /endpoint/{endpointID}/repair
+      parameters:
+        - name: endpointID
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 6
+            maxLength: 6
+            pattern: ^[a-zA-Z0-9]+$
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: Endpoint response Schema
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Endpoint"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/intent:
+    put:
+      summary: Update endpoint intent
+      description: This is for endpoint intent
+      operationId: updateIntent
+      tags:
+        - /endpoint/intent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - Action
+                - Intent
+                - EndpointID
+              type: object
+              additionalProperties: false
+              properties:
+                Action:
+                  type: string
+                  nullable: true
+                EndpointID:
+                  type: string
+                  pattern: ^[a-zA-Z0-9]{6}$
+                  minLength: 6
+                  maxLength: 6
+                  nullable: false
+                EndpointIntent:
+                  additionalProperties: false
+                  type: object
+                  properties:
+                    AutoUnlock:
+                      type: array
+                      items:
+                        type: boolean
+                        nullable: true
+                Intent:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: Update endpoint intent response schema
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/EndpointIntent"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/{endpointID}/groups/remove:
+    post:
+      summary: Delete endpoint from group
+      description: It removes the endpoint from the group
+      operationId: deleteEndpointGroups
+      tags:
+        - /endpoint/{endpointID}/groups/remove
+      parameters:
+        - name: endpointID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9]{6}$
+            minLength: 6
+            maxLength: 6
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/pair:
+    put:
+      summary: Pair endpoint
+      description: Update or create a new pair of endpoint and application
+      operationId: pairEndpoint
+      tags:
+        - /endpoint/pair
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - ApplicationID
+                - EndpointName
+              type: object
+              properties:
+                EndpointName:
+                  type: string
+                  minLength: 3
+                  nullable: false
+                EndpointType:
+                  type: string
+                  enum:
+                    - OloidWorkflow
+                    - Oloid Verify
+                    - Oloid Connect
+                    - Windows Login
+                    - CloudKey
+                    - DeviceLock
+                    - M-Tag
+                    - OloidVault
+                  nullable: false
+                AppBuildNumber:
+                  type: string
+                  nullable: true
+                ApplicationID:
+                  type: string
+                  pattern: ^[a-fA-F0-9]{32}$
+                  maxLength: 32
+                  minLength: 32
+                  nullable: false
+                  example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+                AppVersionNumber:
+                  type: string
+                  nullable: true
+      responses:
+        "200":
+          description: 200 response
+          content:
+            appilication/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Endpoint"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/health:
+    post:
+      summary: Endpoint health check
+      description: Initiates a health check of the endpoint.
+      operationId: initHealthCheck
+      tags:
+        - /endpoint/health
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - endpoints
+                - requestType
+              properties:
+                endpoints:
+                  type: array
+                  items:
+                    type: string
+                    pattern: ^[a-zA-Z0-9]{6}$
+                    minLength: 6
+                    maxLength: 6
+                    nullable: false
+                requestType:
+                  type: string
+                  nullable: true
+                appReLaunch:
+                  type: boolean
+                  nullable: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/autopair:
+    post:
+      summary: Endpoint autopair
+      description: Initiates a request to send information about a device endpoint for
+        pairing or synchronization
+      operationId: autoPairEndpoint
+      tags:
+        - /endpoint/autopair
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - ApplicationID
+                - EndpointName
+              $ref: "#/components/schemas/Endpoint"
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: Endpoint response Schema
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Endpoint"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/windows/health:
+    post:
+      summary: Windows System Health Check
+      description: Initiates a health check of a Windows system.
+      operationId: updateHealthForWindowsEndpoint
+      tags:
+        - /endpoint/windows/health
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EndpointWindowhealth"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/sticker/pair:
+    post:
+      summary: Sticker Pair
+      description: Create a new sticker pair
+      tags:
+        - /endpoint/sticker/pair
+      operationId: pairEndpointSticker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Pair sticker Schema
+              required:
+                - ApplicationID
+                - StickerMACAddress
+                - StickerUUID
+              $ref: "#/components/schemas/Endpoint"
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                title: Pair sticker response Schema
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    type: object
+                    properties:
+                      Sticker:
+                        $ref: "#/components/schemas/Endpoint"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpoint/pair/{endpointID}:
+    delete:
+      summary: Delete endpoint
+      description: Delete a specific endpoint
+      operationId: deleteEndpoint
+      tags:
+        - /endpoint/{endpointID}
+      parameters:
+        - in: path
+          name: endpointID
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9]{6}$
+            minLength: 6
+            maxLength: 6
+            nullable: false
+        - in: query
+          name: reason
+          required: true
+          schema:
+            type: string
+            minLength: 6
+            nullable: false
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /endpointTemplate/create:
+    post:
+      summary: Create endpoint template
+      description: It creates an endpoint template
+      operationId: createEndpointTemplate
+      tags:
+        - /endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EndpointTemplate"
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/EndpointTemplate"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Endpoint does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+components:
+  securitySchemes:
+    AuthToken:
+      type: http
+      scheme: bearer
+  schemas:
+    EndpointIntent:
+      type: object
+      properties:
+        Action:
+          type: string
+          nullable: true
+        Intent:
+          $ref: "#/components/schemas/Intent"
+        Success:
+          type: boolean
+          nullable: true
+    Intent:
+      $ref: ./common/Intent.json
+    GetEndpointDetail:
+      type: object
+      additionalProperties: false
+      properties:
+        endpointTypes:
+          type: array
+          nullable: true
+          items:
+            type: string
+            enum:
+              - DeviceLock
+              - Windows Login
+              - OloidVault
+              - CloudKey
+              - M-Tag
+              - Oloid Connect
+              - Workflow
+              - Oloid Verify
+              - OloidWorkflow
+              - iPad
+            nullable: true
+        endpoints:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Endpoint"
+    EndpointTemplate:
+      type: object
+      additionalProperties: false
+      properties:
+        EndpointTemplateName:
+          type: string
+          nullable: true
+        Endpoint:
+          $ref: "#/components/schemas/Endpoint"
+        EndpointTemplateID:
+          type: string
+          nullable: true
+        CreatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        UpdatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    Endpoint:
+      $ref: ./schemas/Endpoint.json
+    EndpointWindowhealth:
+      type: object
+      properties:
+        EndpointID:
+          type: string
+          pattern: ^[a-zA-Z0-9]{6}$
+          minLength: 6
+          maxLength: 6
+          nullable: false
+        HealthCheckType:
+          type: string
+          nullable: true
+        HealthObject:
+          $ref: "#/components/schemas/Endpoint"
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message: "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
+security:
+  - AuthToken: []
+tags:
+  - name: /endpoint
+    description: Operations on the endpoints collection
+  - name: /endpoint/{endpointID}
+    description: Operations on a specific endpoint
+  - name: /uniqueid/guid
+    description: GUID operations
+  - name: /endpoint/{endpointID}/repair
+    description: Repair operations for a specific endpoint
+  - name: /endpoint/intent
+    description: Intent management operations
+  - name: /endpoint/health
+    description: Health check operations
+  - name: /endpoint/sticker/pair
+    description: Sticker pairing operations
+  - name: /endpoint/pair
+    description: Endpoint pairing operations
+  - name: /endpoint/{endpointID}/groups/remove
+    description: Group removal operations for a specific endpoint
+  - name: /endpoint/autopair
+    description: Automatic endpoint pairing operations
+  - name: /endpoint/windows/health
+    description: Windows-specific health check operations
+  - name: /endpoint/pair/{endpointID}
+    description: Delete operations for paired endpoints

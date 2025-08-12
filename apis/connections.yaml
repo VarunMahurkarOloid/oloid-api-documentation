@@ -1,0 +1,565 @@
+openapi: 3.0.3
+info:
+  title: Connections
+  version: 1.0.0
+  description: API documentations for managing Connection Endpoints
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /connections:
+    get:
+      summary: Get connections
+      description: Returns a list of the first 100 connections. Optionally filter by
+        applicationID.
+      tags:
+        - /connections
+      operationId: getConnections
+      responses:
+        "200":
+          description: List of connections returned successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Connection"
+              examples:
+                default:
+                  $ref: "#/components/examples/GetConnectionListExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "500":
+          description: Internal Server Error - Server encountered an unexpected condition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    post:
+      summary: Create a Connection
+      description: Creates a new connection using the provided details.
+      tags:
+        - /connections
+      operationId: createConnection
+      requestBody:
+        required: true
+        description: Required fields must match the CreateConnectionRequest schema.
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                Description:
+                  type: string
+                  nullable: true
+                ConnectionDisplayName:
+                  type: string
+                  nullable: true
+                EnableAddFaceBestShot:
+                  type: boolean
+                  nullable: true
+              required:
+                - ConnectionDisplayName
+            examples:
+              default:
+                $ref: "#/components/examples/CreateConnectionRequestExample"
+      responses:
+        "200":
+          description: Connection created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    nullable: true
+                  data:
+                    $ref: "#/components/schemas/Connection"
+              examples:
+                default:
+                  $ref: "#/components/examples/CreateConnectionResponseExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+  /connections/{connectionID}:
+    get:
+      summary: Get a connection
+      description: Returns details for the specified connection ID.
+      tags:
+        - /connections/{connectionID}
+      operationId: getConnectionByConnectionID
+      parameters:
+        - in: path
+          name: connectionID
+          required: true
+          schema:
+            type: string
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+          description: "connectionID (string, required): The ID of the connection to
+            retrieve."
+      responses:
+        "200":
+          description: Connection details returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/Connection"
+              examples:
+                default:
+                  $ref: "#/components/examples/GetConnectionByIdExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: No connection found for the given ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    put:
+      summary: Update a connection
+      description: Updates information for the specified connection.
+      tags:
+        - /connections/{connectionID}
+      operationId: updateConnection
+      parameters:
+        - name: connectionID
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+          description: "connectionID (string, required): The ID of the connection to
+            update."
+      requestBody:
+        required: true
+        description: Must match the UpdateConnectionRequest schema.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Description:
+                  type: string
+                  nullable: true
+                ConnectionID:
+                  type: string
+                  pattern: ^[0-9a-fA-F]{32}$
+                  example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+                  minLength: 32
+                  maxLength: 32
+                  nullable: false
+                RequireConsent:
+                  type: boolean
+                  nullable: true
+              additionalProperties: false
+            examples:
+              default:
+                $ref: "#/components/examples/UpdateConnectionRequestExample"
+      responses:
+        "200":
+          description: Connection updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  summary: Example of successful connection update response
+                  description: Example showing the response after successfully updating a
+                    connection
+                  value:
+                    message: Connection updated successfully
+        "400":
+          description: Invalid input or connection not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: No connection found for the given ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+    delete:
+      summary: Delete a connection
+      description: Deletes the connection identified by connectionID. The connection
+        must not be the default or have any users linked.
+      tags:
+        - /connections/{connectionID}
+      operationId: deleteConnection
+      parameters:
+        - name: connectionID
+          in: path
+          required: true
+          description: "connectionID (string, required): The ID of the connection to
+            delete."
+          schema:
+            type: string
+            pattern: ^[0-9a-fA-F]{32}$
+            example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+            minLength: 32
+            maxLength: 32
+            nullable: false
+        - name: reason
+          in: query
+          required: true
+          description: Give a reason of deleting connection for the connectionID.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Connection deleted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/DeleteConnectionResponseExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: No connection found for the given ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    Connection:
+      $ref: ./schemas/Connection.json
+    Application:
+      $ref: ./schemas/Application.json
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    GetConnectionListExample:
+      summary: Example of successful connections list retrieval
+      description: Shows a list of connections with complete details
+      value:
+        message: Connections retrieved successfully
+        data:
+          - ConnectionDisplayName: Face Authentication Connection
+            ConnectionGroupID: 7b07fe201c7811f0bc6e61eee85f49f2
+            ConnectionID: 7b07fe201c7811f0bc6e61eee85f49f2
+            ConsentTemplateID: 7b07fe20-1c78-11f0-bc6e-61eee85f49f2
+            ConsentTemplateName: Standard Consent
+            ConsentUpdatedDate: 2025-04-27T10:30:00Z
+            CreatedAt: 2025-04-27T10:30:00Z
+            DeleteUserProtectionLimit: 100
+            Description: Connection for facial authentication
+            EnableAddFaceBestShot: true
+            EnableAddFaceLiveliness: true
+            EnableAddFaceLivenessCheck: true
+            EnableMinConfidence: true
+            EnableOloID: true
+            FaceCompare: true
+            FaceCompareSimilarityThreshold: 0.95
+            LivelinessConfig:
+              IDRND:
+                Probability: 0.98
+                Quality: 0.95
+            MinConfidence: 0.9
+            MinLivelinessProbability: 0.95
+            MinLivelinessQuality: 0.9
+            PreviousTemplateIDs: []
+            RequireConsent: true
+            SendAppDownloadEmail: false
+            SystemDefault: false
+            UpdatedAt: 2025-04-27T11:30:00Z
+            Applications: []
+    CreateConnectionResponseExample:
+      value:
+        message: Connection created successfully
+        data:
+          ConnectionDisplayName: TestConn2
+          Description: Test Connection 2
+          EnableAddFaceBestShot: true
+          ConnectionID: 184ca0502a8411f09a8677da5ed0ab98
+          CreatedAt: 2025-05-06T14:12:08.021Z
+          UpdatedAt: 2025-05-06T14:12:08.021Z
+    CreateConnectionRequestExample:
+      summary: Example of connection creation request
+      value:
+        ConnectionDisplayName: Face Authentication Connection
+        Description: Connection for facial authentication
+        EnableAddFaceBestShot: true
+    GetConnectionByIdExample:
+      summary: Example of successful single connection retrieval
+      description: Shows a single connection with complete details
+      value:
+        message: Connection retrieved successfully
+        data:
+          ConnectionDisplayName: Face Authentication Connection
+          ConnectionGroupID: 7b07fe201c7811f0bc6e61eee85f49f2
+          ConnectionID: 7b07fe201c7811f0bc6e61eee85f49f2
+          ConsentTemplateID: 7b07fe20-1c78-11f0-bc6e-61eee85f49f2
+          ConsentTemplateName: Standard Consent
+          ConsentUpdatedDate: 2025-04-27T10:30:00Z
+          CreatedAt: 2025-04-27T10:30:00Z
+          DeleteUserProtectionLimit: 100
+          Description: Connection for facial authentication
+          EnableAddFaceBestShot: true
+          EnableAddFaceLiveliness: true
+          EnableAddFaceLivenessCheck: true
+          EnableMinConfidence: true
+          EnableOloID: true
+          FaceCompare: true
+          FaceCompareSimilarityThreshold: 0.95
+          LivelinessConfig:
+            IDRND:
+              Probability: 0.98
+              Quality: 0.95
+          MinConfidence: 0.9
+          MinLivelinessProbability: 0.95
+          MinLivelinessQuality: 0.9
+          PreviousTemplateIDs: []
+          RequireConsent: true
+          SendAppDownloadEmail: false
+          SystemDefault: false
+          UpdatedAt: 2025-04-27T11:30:00Z
+          Applications: []
+    UpdateConnectionRequestExample:
+      summary: Example of connection update request
+      description: Example showing a request to update an existing connection
+      value:
+        Description: Updated face authentication connection
+        ConnectionID: 7b07fe201c7811f0bc6e61eee85f49f2
+        RequireConsent: true
+    DeleteConnectionResponseExample:
+      summary: Example of successful connection deletion response
+      description: Example showing the response after successfully deleting a connection
+      value:
+        status: success
+        message: Connection deleted successfully
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message: "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
+security:
+  - BearerAuth: []
+tags:
+  - name: /connections
+    description: Operations on the connections collection (list and create)
+  - name: /connections/{connectionID}
+    description: Operations on a specific connection

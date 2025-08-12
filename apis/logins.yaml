@@ -1,0 +1,285 @@
+openapi: 3.0.3
+info:
+  title: Login Documentation
+  version: 1.0.0
+  description: API documentation for managing Login.
+  license:
+    name: Apache 2.0
+    url: https://www.oloid.ai
+servers:
+  - url: https://api.oloiddev.com
+paths:
+  /login:
+    post:
+      summary: Login to receive Cognito tokens and user data.
+      description: Authenticate the user and return tokens including IDToken,
+        AccessToken, and RefreshToken.
+      operationId: login
+      tags:
+        - /login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            example:
+              UserName: johndoe@oloid.ai
+              TenantName: preview
+              Password: MySecretPass123
+      responses:
+        "200":
+          description: Successfully authenticated. Returns Cognito tokens (AccessToken,
+            IdToken, RefreshToken) and user data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/LoginExample"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadRequestExample"
+        "401":
+          description: "Unauthorized: Access token is missing or invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/UnauthorizedExample"
+        "404":
+          description: Does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/NotFoundExample"
+        "500":
+          description: An error occurred on the server.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/InternalServerErrorExample"
+        "502":
+          description: "Bad Gateway: The proxy server received an invalid response."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BadGatewayExample"
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - UserName
+        - TenantName
+        - Password
+      properties:
+        UserName:
+          type: string
+          nullable: false
+          description: Username used to login.
+          example: johndoe@oloid.ai
+        TenantName:
+          type: string
+          nullable: false
+          description: Name of the tenant associated with the user.
+          example: preview
+        Password:
+          type: string
+          format: password
+          nullable: false
+          description: Password associated with the username.
+          example: MySecretPass123
+    LoginResponse:
+      title: Tenant Login Response Schema
+      type: object
+      additionalProperties: false
+      required:
+        - cognitoToken
+        - user
+      properties:
+        cognitoToken:
+          $ref: "#/components/schemas/CognitoToken"
+        user:
+          $ref: "#/components/schemas/UserInfo"
+    CognitoToken:
+      type: object
+      additionalProperties: false
+      required:
+        - $metadata
+        - AuthenticationResult
+        - ChallengeParameters
+      properties:
+        $metadata:
+          $ref: "#/components/schemas/MetaData"
+        AuthenticationResult:
+          $ref: "#/components/schemas/AuthenticationResult"
+        ChallengeParameters:
+          $ref: "#/components/schemas/ChallengeParams"
+    MetaData:
+      type: object
+      additionalProperties: false
+      required:
+        - httpStatusCode
+        - requestId
+        - attempts
+        - totalRetryDelay
+      properties:
+        httpStatusCode:
+          type: integer
+          description: This is the HTTP status code
+          example: 200
+          nullable: false
+        requestId:
+          type: string
+          description: This is requestId
+          example: 6607dfa0-4c7c-4d58-9393-08df997d9c0
+          nullable: false
+        attempts:
+          type: integer
+          description: This is the attempts count
+          example: 3
+          nullable: false
+        totalRetryDelay:
+          type: integer
+          description: This is the total retry delay count
+          example: 0
+          nullable: false
+    AuthenticationResult:
+      type: object
+      additionalProperties: false
+      required:
+        - AccessToken
+        - IdToken
+        - RefreshToken
+        - ExpiresIn
+        - TokenType
+      properties:
+        AccessToken:
+          type: string
+          description: The access token issued by Cognito.
+          format: jwt
+          example: eyJraWQiOiJKZ...
+          nullable: false
+        IdToken:
+          type: string
+          description: The ID token issued by Cognito.
+          format: jwt
+          example: eyJraWQiOiJGSl...
+          nullable: false
+        RefreshToken:
+          type: string
+          description: The refresh token used to obtain new tokens.
+          format: jwt
+          example: eyJjdHkiOiJKV1...
+          nullable: false
+        ExpiresIn:
+          type: integer
+          description: Expiration time in seconds for the token.
+          example: 3600
+          nullable: false
+        TokenType:
+          type: string
+          description: The type of token issued.
+          example: Bearer
+          nullable: false
+    ChallengeParams:
+      type: object
+      additionalProperties: false
+      description: Challenge parameters returned by Cognito, usually empty if
+        authentication succeeds.
+      nullable: true
+      example: {}
+    UserInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - OloID
+        - TenantID
+        - TenantName
+      properties:
+        OloID:
+          type: string
+          description: The unique OloID of the user.
+          pattern: ^[0-9a-fA-F]{32}$
+          example: 70a4f870d7ef11ef97ef7fd6a9ac4856
+          minLength: 32
+          maxLength: 32
+          nullable: false
+        TenantID:
+          type: string
+          description: The unique ID of the tenant.
+          nullable: false
+          minLength: 16
+          maxLength: 16
+          pattern: ^[0-9a-fA-F]{16}$
+          example: FA0280A8A0E64DF9
+        TenantName:
+          type: string
+          description: The name of the tenant.
+          minLength: 2
+          example: preview
+          nullable: false
+    ErrorResponse:
+      $ref: ./common/Message.json
+  examples:
+    LoginExample:
+      value:
+        cognitoToken:
+          $metadata:
+            httpStatusCode: 200
+            requestId: 6607dfa0-4c7c-4d58-9393-08df997d9c0
+            attempts: 1
+            totalRetryDelay: 0
+          AuthenticationResult:
+            AccessToken: eyJraWQiOiJKZ...access
+            IdToken: eyJraWQiOiJGSl...id
+            RefreshToken: eyJjdHkiOiJKV1...refresh
+            ExpiresIn: 3600
+            TokenType: Bearer
+          ChallengeParameters: {}
+        user:
+          OloID: c4d2a2909b6711ef81534be9be30797b
+          TenantID: FA0280A8A0E64DF9
+          TenantName: oloid
+    BadRequestExample:
+      value:
+        status: "400"
+        message: Bad Request
+    UnauthorizedExample:
+      value:
+        status: "401"
+        message: "Unauthorized: Access token is missing or invalid"
+    NotFoundExample:
+      value:
+        status: "404"
+        message: Not Found
+    InternalServerErrorExample:
+      value:
+        status: "500"
+        message: Internal Server Error - Server encountered an unexpected condition
+    BadGatewayExample:
+      value:
+        status: "502"
+        message: "Bad Gateway: The proxy server received an invalid response from an
+          upstream server"
