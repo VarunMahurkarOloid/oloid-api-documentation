@@ -81,7 +81,7 @@
       "$ref": "./Worker.json"
     },
     "PostAuthSurvey": {
-      "$ref": "./PostAuthSurvey.json"
+      "$ref": "./PostAuthsurvey.json"
     },
     "SupervisorId": {
       "type": "string",

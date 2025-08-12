@@ -128,7 +128,7 @@
     "ConsentMetadata": {
       "type": "array",
       "items": {
-        "$ref": "../common/ConsentMetaData.json"
+        "$ref": "../common/ConsentMetadata.json"
       }
     },
     "CreatedAt": {
