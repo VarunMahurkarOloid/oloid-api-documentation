@@ -1,4 +1,5 @@
 import type { ZudokuConfig } from "zudoku";
+import Welcome from "./Welcome";
 
 const config: ZudokuConfig = {
   theme: {
@@ -60,7 +61,8 @@ const config: ZudokuConfig = {
   navigation: [
     {
       type: "category",
-      label: "Documentation",
+      label: "API Reference",
+      icon: "code",
       items: [
         {
           type: "category",
@@ -225,12 +227,29 @@ const config: ZudokuConfig = {
       ],
     },
     {
-      type: "link",
-      to: "/api",
-      label: "API Reference",
+      type: "custom-page",
+      path: "/",
+      element: <Welcome />,
     },
+    {
+      type: "category",
+      label: "Changelog",
+      icon: "megaphone",
+      items: ["/welcome"],
+    },
+    {
+      type: "category",
+      label: "API Reference Advanced",
+      icon: "user-lock",
+      items: ["/logins"],
+    },
+    // {
+    //   type: "link",
+    //   to: "/api",
+    //   label: "API Reference",
+    // },
   ],
-  redirects: [{ from: "/", to: "/introduction" }],
+  // redirects: [{ from: "/", to: "/introduction" }],
   apis: [
     {
       type: "file",

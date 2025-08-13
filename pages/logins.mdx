@@ -2,15 +2,24 @@
 title: Welcome to Oloid Login
 ---
 
-Thanks for choosing to use Zudoku to power your API documentation!
+In this guide, we will help you get started with the Oloid API, specifically focusing on the **Login API** that allows you to authenticate users and obtain an `id-token` for secure access to protected resources.
 
-## Edit this page
+## 🚀 Login API
 
-To edit this page, open the `pages/introduction.mdx` file.
+The Login API is the first step in integrating authentication into your app. It enables users to log in and retrieve an **id-token**, which can be used for further authenticated API requests.
 
-## Configuration
+### Endpoint
 
-You can find the full configuration for your Zudoku site in the `zudoku.config.tsx` file.
+###### POST: /login
 
-For further information on how to customize your site, check out the
-[Zudoku documentation](https://zudoku.dev/docs).
+### Request Body
+
+To authenticate a user, send a `POST` request to the `/login` endpoint with the following JSON payload:
+
+```json
+{
+  "UserName": "johndoe@oloid.ai",
+  "TenantName": "preview",
+  "Password": "MySecretPass123"
+}
+```
